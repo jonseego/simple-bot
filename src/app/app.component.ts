@@ -17,11 +17,8 @@ export class AppComponent implements OnInit {
 
           function addActionBar() {
             const fragment = document.createDocumentFragment();
-            const li = fragment
-              .appendChild(createMainContainer())
-              .appendChild(document.createElement("ul"))
-              .appendChild(document.createElement("li"));
-            li.textContent = "hello world";
+            const header = fragment.appendChild(createMainContainer())
+            header.textContent = "Step 1. For loop";
   
             document.body.appendChild(fragment);
           }
@@ -44,6 +41,19 @@ export class AppComponent implements OnInit {
         },
         args: []
       });
+      chrome.scripting
+      .insertCSS({
+        target: { tabId: tabs[0].id! },
+        css : this.getGlobalCss(),
+      })
     });
+  }
+
+  private getGlobalCss(): string {
+    return `body {
+      .todo-list li:hover {
+        border: 1px solid red;
+      }
+    }`;
   }
 }
