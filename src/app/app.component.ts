@@ -12,8 +12,38 @@ export class AppComponent implements OnInit {
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id! },
         func: () => {
+          let selectedNodes: HTMLDivElement[] = [];
+
           removePlaceholderContainer();
           addActionBar();
+          addClickListeners();
+
+          function addClickListeners() {
+            const parentEl = document.getElementsByClassName('todo-wrapper')?.item(0) as HTMLDivElement;
+            const children = parentEl.getElementsByTagName('form');
+            for (let index = 0; index < children.length; index++) {
+              const element = children.item(index);
+              element?.addEventListener("click", () => {
+                selectedNodes.push(element as any);
+                processNodes(selectedNodes);
+              });
+            }
+  
+            const parentEl2 = document.getElementsByClassName('todo-list').item(0) as HTMLDivElement;
+            parentEl2.childNodes.forEach((_listItem) => {
+              const listItem = _listItem as HTMLDivElement;
+              listItem.addEventListener("click", () => {
+                selectedNodes.push(listItem);
+                processNodes(selectedNodes);
+              });
+            });
+          }
+
+          function processNodes(nodes: HTMLDivElement[]) {
+            nodes.forEach((node) => {
+              node.style.border = "2px solid blue";
+            });
+          }
 
           function addActionBar() {
             const fragment = document.createDocumentFragment();
@@ -51,8 +81,11 @@ export class AppComponent implements OnInit {
 
   private getGlobalCss(): string {
     return `body {
-      .todo-list li:hover {
-        border: 1px solid red;
+      .todo-list > li:hover {
+        border: 2px solid blue;
+      }
+      .todo-wrapper > form:hover {
+        border: 2px solid blue;
       }
     }`;
   }
