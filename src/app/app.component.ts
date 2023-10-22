@@ -12,37 +12,34 @@ export class AppComponent implements OnInit {
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id! },
         func: () => {
-          let selectedNodes: HTMLDivElement[] = [];
-
           removePlaceholderContainer();
           addActionBar();
-          addClickListeners();
+          setupBot('todo-wrapper', 'form');
+          setupBot('todo-list', 'li');
 
-          function addClickListeners() {
-            const parentEl = document.getElementsByClassName('todo-wrapper')?.item(0) as HTMLDivElement;
-            const children = parentEl.getElementsByTagName('form');
+          function setupBot(parentClass: string, childTag: string) {
+            const parentEl = document.getElementsByClassName(parentClass)?.item(0) as HTMLDivElement;
+            const children = parentEl.getElementsByTagName(childTag);
+            const selectedIndeces: number[] = [];
+            const predictedIndeces: number[] = [];
             for (let index = 0; index < children.length; index++) {
-              const element = children.item(index);
+              const element = children.item(index) as HTMLDivElement;
               element?.addEventListener("click", () => {
-                selectedNodes.push(element as any);
-                processNodes(selectedNodes);
+                selectedIndeces.push(index);
+                element.style.border = "2px solid blue";
+                if (selectedIndeces.length === 2) {
+                  for (let index = 0; index < children.length; index++) {
+                    if (!selectedIndeces.includes(index)) {
+                      predictedIndeces.push(index);
+                    }
+                    predictedIndeces.forEach(predictedIndex => {
+                      const element = children.item(predictedIndex) as HTMLElement;
+                      element.style.border = "2px solid green";
+                    });
+                  }
+                }
               });
             }
-  
-            const parentEl2 = document.getElementsByClassName('todo-list').item(0) as HTMLDivElement;
-            parentEl2.childNodes.forEach((_listItem) => {
-              const listItem = _listItem as HTMLDivElement;
-              listItem.addEventListener("click", () => {
-                selectedNodes.push(listItem);
-                processNodes(selectedNodes);
-              });
-            });
-          }
-
-          function processNodes(nodes: HTMLDivElement[]) {
-            nodes.forEach((node) => {
-              node.style.border = "2px solid blue";
-            });
           }
 
           function addActionBar() {
