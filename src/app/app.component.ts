@@ -44,20 +44,60 @@ export class AppComponent implements OnInit {
 
           function addActionBar() {
             const fragment = document.createDocumentFragment();
-            const header = fragment.appendChild(createMainContainer())
-            header.textContent = "Step 1. For loop";
-  
+            const botContainer = fragment.appendChild(createMainContainer())
+            botContainer.appendChild(createBotHeader());
+            botContainer.appendChild(createBotBody());
+            botContainer.appendChild(createBotFooter());
             document.body.appendChild(fragment);
           }
 
           function createMainContainer() {
             const container = document.createElement("section");
+            container.id = "bot-main-container";
             container.style.backgroundColor = 'white';
             container.style.position = 'sticky';
             container.style.bottom = '0';
             container.style.width = '80%';
             container.style.margin = 'auto';
-            container.style.height = '5rem';
+            container.style.height = '8rem';
+            container.style.padding = '1rem';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            return container;
+          }
+
+          function createBotHeader() {
+            const container = document.createElement("div");
+            container.id = "bot-header";
+            container.style.height = '2rem';
+            container.textContent = "Step 1. For loop";
+            return container;
+          }
+
+          function createBotBody() {
+            const container = document.createElement("div");
+            container.id = "bot-body";
+            container.style.flexGrow = '1';
+            container.style.display = 'flex';
+            container.style.alignItems = 'center';
+            container.textContent = "Select an element";
+            return container;
+          }
+
+          function createBotFooter() {
+            const container = document.createElement("div");
+            container.id = "bot-footer";
+            container.style.height = '2rem';
+            container.style.display = 'flex';
+            container.style.alignItems = 'end';
+            container.style.justifyContent = 'end';
+            container.style.gap = '0.5rem';
+            const resetButton = document.createElement("button");
+            resetButton.textContent = 'Reset';
+            const saveButton = document.createElement("button");
+            saveButton.textContent = 'Save';
+            container.appendChild(resetButton);
+            container.appendChild(saveButton);
             return container;
           }
 
