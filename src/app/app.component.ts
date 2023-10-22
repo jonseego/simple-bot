@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
         target: { tabId: tabs[0].id! },
         func: () => {
           const mapBotData: {[key: string]: BotData} = {};
+          let botBody: HTMLDivElement;
 
           removePlaceholderContainer();
           addActionBar();
@@ -35,11 +36,12 @@ export class AppComponent implements OnInit {
                     if (!botData.selectedIndeces.includes(index)) {
                       botData.predictedIndeces.push(index);
                     }
-                    botData.predictedIndeces.forEach(predictedIndex => {
-                      const element = children.item(predictedIndex) as HTMLElement;
-                      element.style.border = "2px dashed green";
-                    });
                   }
+                  botData.predictedIndeces.forEach(predictedIndex => {
+                    const element = children.item(predictedIndex) as HTMLElement;
+                    element.style.border = "2px solid green";
+                  });
+                  updateBotBody(`Great! You selected ${botData.selectedIndeces.length} elements, we predicted ${botData.predictedIndeces.length} additional elements. In total, ${botData.selectedIndeces.length + botData.predictedIndeces.length} are selected`);
                 }
               });
             }
@@ -49,6 +51,7 @@ export class AppComponent implements OnInit {
             const botData = mapBotData[parentClass];
             botData.predictedIndeces = [];
             botData.selectedIndeces = [];
+            updateBotBody('Select an element');
             const parentEl = document.getElementsByClassName(parentClass)?.item(0) as HTMLDivElement;
             const children = parentEl.getElementsByTagName(childTag);
             for (let index = 0; index < children.length; index++) {
@@ -67,36 +70,43 @@ export class AppComponent implements OnInit {
           }
 
           function createMainContainer() {
-            const container = document.createElement("section");
-            container.id = "bot-main-container";
-            container.style.backgroundColor = 'white';
-            container.style.position = 'sticky';
-            container.style.bottom = '0';
-            container.style.width = '80%';
-            container.style.margin = 'auto';
-            container.style.height = '8rem';
-            container.style.padding = '1rem';
-            container.style.display = 'flex';
-            container.style.flexDirection = 'column';
-            return container;
+            const element = document.createElement("section");
+            element.id = "bot-main-container";
+            element.style.backgroundColor = 'white';
+            element.style.position = 'sticky';
+            element.style.bottom = '0';
+            element.style.width = '80%';
+            element.style.margin = 'auto';
+            element.style.height = '8rem';
+            element.style.padding = '1rem';
+            element.style.display = 'flex';
+            element.style.flexDirection = 'column';
+            return element;
           }
 
           function createBotHeader() {
-            const container = document.createElement("div");
-            container.id = "bot-header";
-            container.style.height = '2rem';
-            container.textContent = "Step 1. For loop";
-            return container;
+            const element = document.createElement("div");
+            element.id = "bot-header";
+            element.style.height = '2rem';
+            element.textContent = 'Step 1. For loop';
+            return element;
           }
 
           function createBotBody() {
-            const container = document.createElement("div");
-            container.id = "bot-body";
-            container.style.flexGrow = '1';
-            container.style.display = 'flex';
-            container.style.alignItems = 'center';
-            container.textContent = "Select an element";
-            return container;
+            const element = document.createElement("div");
+            element.id = "bot-body";
+            element.style.flexGrow = '1';
+            element.style.display = 'flex';
+            element.style.alignItems = 'center';
+            element.textContent = 'Select an element';
+            return element;
+          }
+
+          function updateBotBody(text: string) {
+            const element = document.getElementById("bot-body");
+            if (element) {
+              element.textContent = text;
+            }
           }
 
           function createBotFooter() {
