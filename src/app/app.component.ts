@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
                     }
                     predictedIndeces.forEach(predictedIndex => {
                       const element = children.item(predictedIndex) as HTMLElement;
-                      element.style.border = "2px solid green";
+                      element.style.border = "2px dashed green";
                     });
                   }
                 }
@@ -79,10 +79,12 @@ export class AppComponent implements OnInit {
   private getGlobalCss(): string {
     return `body {
       .todo-list > li:hover {
-        border: 2px solid blue;
+        border: 2px dashed blue;
+        cursor: pointer;
       }
       .todo-wrapper > form:hover {
-        border: 2px solid blue;
+        border: 2px dashed blue;
+        cursor: pointer;
       }
     }`;
   }
