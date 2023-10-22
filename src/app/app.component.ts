@@ -14,7 +14,6 @@ export class AppComponent implements OnInit {
         target: { tabId: tabs[0].id! },
         func: () => {
           const mapBotData: {[key: string]: BotData} = {};
-          let botBody: HTMLDivElement;
 
           removePlaceholderContainer();
           addActionBar();
@@ -41,7 +40,9 @@ export class AppComponent implements OnInit {
                     const element = children.item(predictedIndex) as HTMLElement;
                     element.style.border = "2px solid green";
                   });
-                  updateBotBody(`Great! You selected ${botData.selectedIndeces.length} elements, we predicted ${botData.predictedIndeces.length} additional elements. In total, ${botData.selectedIndeces.length + botData.predictedIndeces.length} are selected`);
+                  updateBotBody({
+                    text: `Great! You selected ${botData.selectedIndeces.length} elements, we predicted ${botData.predictedIndeces.length} additional elements. In total, ${botData.selectedIndeces.length + botData.predictedIndeces.length} are selected`
+                  });
                 }
               });
             }
@@ -51,7 +52,7 @@ export class AppComponent implements OnInit {
             const botData = mapBotData[parentClass];
             botData.predictedIndeces = [];
             botData.selectedIndeces = [];
-            updateBotBody('Select an element');
+            updateBotBody({ text: 'Select an element' });
             const parentEl = document.getElementsByClassName(parentClass)?.item(0) as HTMLDivElement;
             const children = parentEl.getElementsByTagName(childTag);
             for (let index = 0; index < children.length; index++) {
@@ -92,6 +93,13 @@ export class AppComponent implements OnInit {
             return element;
           }
 
+          function updateBotHeader(text: string) {
+            const element = document.getElementById("bot-header");
+            if (element) {
+              element.textContent = text;
+            }
+          }
+
           function createBotBody() {
             const element = document.createElement("div");
             element.id = "bot-body";
@@ -102,10 +110,31 @@ export class AppComponent implements OnInit {
             return element;
           }
 
-          function updateBotBody(text: string) {
+          function updateBotBody(params: {
+            text?: string,
+            actions?: string[],
+          }) {
             const element = document.getElementById("bot-body");
             if (element) {
-              element.textContent = text;
+              if (params.text !== undefined) {
+                element.textContent = params.text;
+              }
+              if (params.actions) {
+                element.style.gap = '1rem';
+                for (let index = 0; index < params.actions.length; index++) {
+                  const action = params.actions[index];
+                  const actionEl = document.createElement('div');
+                  actionEl.style.padding = '0.5rem';
+                  actionEl.style.border = '1px solid grey';
+                  actionEl.style.borderRadius = '0.5rem';
+                  actionEl.style.cursor = 'pointer';
+                  actionEl.textContent = action;
+                  actionEl.addEventListener('click', () => {
+                    actionEl.style.border = '2px solid blue';
+                  });
+                  element.appendChild(actionEl);
+                }
+              }
             }
           }
 
@@ -125,9 +154,41 @@ export class AppComponent implements OnInit {
             });
             const saveButton = document.createElement("button");
             saveButton.textContent = 'Save';
+            saveButton.addEventListener('click', () => {
+              updateBotHeader('Step 2. Choose a child action to execute');
+              updateBotBody({
+                text: '',
+                actions: ['Click a button', 'Input text']
+              });
+              removeBotFooterActions();
+              addBotFooterRunBotAction();
+            });
             container.appendChild(resetButton);
             container.appendChild(saveButton);
             return container;
+          }
+
+          function removeBotFooterActions() {
+            const element = document.getElementById("bot-footer");
+            if (element) {
+              const existingButtons = element.childNodes;
+              const existingButtonLength = existingButtons.length;
+              for (let index = 0; index < existingButtonLength; index++) {
+                element.removeChild(existingButtons.item(0));
+              }
+            }
+          }
+
+          function addBotFooterRunBotAction() {
+            const element = document.getElementById("bot-footer");
+            if (element) {
+              const runBotButton = document.createElement("button");
+              runBotButton.textContent = 'Run Bot';
+              runBotButton.addEventListener('click', () => {
+                //111 next
+              });
+              element.appendChild(runBotButton);
+            }
           }
 
           function removePlaceholderContainer() {
