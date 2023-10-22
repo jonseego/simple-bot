@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BotData } from './models';
+import { BotActions, BotData } from './models';
 
 @Component({
   selector: 'app-root',
@@ -99,7 +99,7 @@ export class AppComponent implements OnInit {
 
           function updateBotBody(params: {
             text?: string,
-            actions?: string[],
+            actions?: BotActions[],
           }) {
             const element = document.getElementById("bot-body");
             if (element) {
@@ -114,6 +114,9 @@ export class AppComponent implements OnInit {
                   actionEl.textContent = action;
                   actionEl.addEventListener('click', () => {
                     actionEl.className = "bot-action-card selected";
+                    if (action === BotActions.ClickButton) {
+                      // TODO
+                    }
                   });
                   element.appendChild(actionEl);
                 }
@@ -138,7 +141,7 @@ export class AppComponent implements OnInit {
               updateBotHeader('Step 2. Choose a child action to execute');
               updateBotBody({
                 text: '',
-                actions: ['Click a button', 'Input text']
+                actions: [BotActions.ClickButton, BotActions.InputText]
               });
               removeBotFooterActions();
               addBotFooterRunBotAction();
@@ -166,7 +169,7 @@ export class AppComponent implements OnInit {
               runBotButton.textContent = 'Run Bot';
               runBotButton.className = 'bot-button';
               runBotButton.addEventListener('click', () => {
-                //111 next
+                // TODO
               });
               element.appendChild(runBotButton);
             }
@@ -198,10 +201,10 @@ export class AppComponent implements OnInit {
         cursor: pointer;
       }
       .bot-selected {
-        border: 2px solid blue;
+        border: 2px solid blue !important;
       }
       .bot-predicted {
-        border: 2px solid green;
+        border: 2px solid green !important;
       }
       .bot-button {
         cursor: pointer;
@@ -212,6 +215,9 @@ export class AppComponent implements OnInit {
         border: 1px solid grey;
         border-radius: 0.5rem;
         cursor: pointer;
+      }
+      .bot-action-card:hover {
+        background-color: 1px solid blue;
       }
       .bot-action-card.selected {
         border: 2px solid blue;

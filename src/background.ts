@@ -5,5 +5,5 @@ chrome.runtime.onInstalled.addListener(() => {
         chrome.action.disable(id);
       }
     });
-  }, { url: [{ hostContains: 'google.com' }] });//111 all except google domain
+  }, { url: [{ hostContains: '*' }] });
 });
