@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BotData } from './models';
 
 @Component({
   selector: 'app-root',
@@ -12,27 +13,29 @@ export class AppComponent implements OnInit {
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id! },
         func: () => {
+          const mapBotData: {[key: string]: BotData} = {};
+
           removePlaceholderContainer();
           addActionBar();
           setupBot('todo-wrapper', 'form');
           setupBot('todo-list', 'li');
 
           function setupBot(parentClass: string, childTag: string) {
+            const botData: BotData = {predictedIndeces: [], selectedIndeces: []};
+            mapBotData[parentClass] = botData;
             const parentEl = document.getElementsByClassName(parentClass)?.item(0) as HTMLDivElement;
             const children = parentEl.getElementsByTagName(childTag);
-            const selectedIndeces: number[] = [];
-            const predictedIndeces: number[] = [];
             for (let index = 0; index < children.length; index++) {
               const element = children.item(index) as HTMLDivElement;
               element?.addEventListener("click", () => {
-                selectedIndeces.push(index);
+                botData.selectedIndeces.push(index);
                 element.style.border = "2px solid blue";
-                if (selectedIndeces.length === 2) {
+                if (botData.selectedIndeces.length === 2) {
                   for (let index = 0; index < children.length; index++) {
-                    if (!selectedIndeces.includes(index)) {
-                      predictedIndeces.push(index);
+                    if (!botData.selectedIndeces.includes(index)) {
+                      botData.predictedIndeces.push(index);
                     }
-                    predictedIndeces.forEach(predictedIndex => {
+                    botData.predictedIndeces.forEach(predictedIndex => {
                       const element = children.item(predictedIndex) as HTMLElement;
                       element.style.border = "2px dashed green";
                     });
@@ -41,6 +44,18 @@ export class AppComponent implements OnInit {
               });
             }
           }
+
+          function resetSelection(parentClass: string, childTag: string) {
+            const botData = mapBotData[parentClass];
+            botData.predictedIndeces = [];
+            botData.selectedIndeces = [];
+            const parentEl = document.getElementsByClassName(parentClass)?.item(0) as HTMLDivElement;
+            const children = parentEl.getElementsByTagName(childTag);
+            for (let index = 0; index < children.length; index++) {
+              const element = children.item(index) as HTMLDivElement;
+              element.style.border = "";
+            }
+          }  
 
           function addActionBar() {
             const fragment = document.createDocumentFragment();
@@ -94,6 +109,10 @@ export class AppComponent implements OnInit {
             container.style.gap = '0.5rem';
             const resetButton = document.createElement("button");
             resetButton.textContent = 'Reset';
+            resetButton.addEventListener('click', () => {
+              resetSelection('todo-wrapper', 'form');
+              resetSelection('todo-list', 'li');
+            });
             const saveButton = document.createElement("button");
             saveButton.textContent = 'Save';
             container.appendChild(resetButton);
