@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
               const element = children.item(index) as HTMLDivElement;
               element?.addEventListener("click", () => {
                 botData.selectedIndeces.push(index);
-                element.style.border = "2px solid blue";
+                element.className = "bot-selected";
                 if (botData.selectedIndeces.length === 2) {
                   for (let index = 0; index < children.length; index++) {
                     if (!botData.selectedIndeces.includes(index)) {
@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
                   }
                   botData.predictedIndeces.forEach(predictedIndex => {
                     const element = children.item(predictedIndex) as HTMLElement;
-                    element.style.border = "2px solid green";
+                    element.className = "bot-predicted";
                   });
                   updateBotBody({
                     text: `Great! You selected ${botData.selectedIndeces.length} elements, we predicted ${botData.predictedIndeces.length} additional elements. In total, ${botData.selectedIndeces.length + botData.predictedIndeces.length} are selected`
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
             const children = parentEl.getElementsByTagName(childTag);
             for (let index = 0; index < children.length; index++) {
               const element = children.item(index) as HTMLDivElement;
-              element.style.border = "";
+              element.className = "";
             }
           }  
 
@@ -73,22 +73,12 @@ export class AppComponent implements OnInit {
           function createMainContainer() {
             const element = document.createElement("section");
             element.id = "bot-main-container";
-            element.style.backgroundColor = 'white';
-            element.style.position = 'sticky';
-            element.style.bottom = '0';
-            element.style.width = '80%';
-            element.style.margin = 'auto';
-            element.style.height = '8rem';
-            element.style.padding = '1rem';
-            element.style.display = 'flex';
-            element.style.flexDirection = 'column';
             return element;
           }
 
           function createBotHeader() {
             const element = document.createElement("div");
             element.id = "bot-header";
-            element.style.height = '2rem';
             element.textContent = 'Step 1. For loop';
             return element;
           }
@@ -103,9 +93,6 @@ export class AppComponent implements OnInit {
           function createBotBody() {
             const element = document.createElement("div");
             element.id = "bot-body";
-            element.style.flexGrow = '1';
-            element.style.display = 'flex';
-            element.style.alignItems = 'center';
             element.textContent = 'Select an element';
             return element;
           }
@@ -120,17 +107,13 @@ export class AppComponent implements OnInit {
                 element.textContent = params.text;
               }
               if (params.actions) {
-                element.style.gap = '1rem';
                 for (let index = 0; index < params.actions.length; index++) {
                   const action = params.actions[index];
                   const actionEl = document.createElement('div');
-                  actionEl.style.padding = '0.5rem';
-                  actionEl.style.border = '1px solid grey';
-                  actionEl.style.borderRadius = '0.5rem';
-                  actionEl.style.cursor = 'pointer';
+                  actionEl.className = "bot-action-card";
                   actionEl.textContent = action;
                   actionEl.addEventListener('click', () => {
-                    actionEl.style.border = '2px solid blue';
+                    actionEl.className = "bot-action-card selected";
                   });
                   element.appendChild(actionEl);
                 }
@@ -141,19 +124,16 @@ export class AppComponent implements OnInit {
           function createBotFooter() {
             const container = document.createElement("div");
             container.id = "bot-footer";
-            container.style.height = '2rem';
-            container.style.display = 'flex';
-            container.style.alignItems = 'end';
-            container.style.justifyContent = 'end';
-            container.style.gap = '0.5rem';
             const resetButton = document.createElement("button");
             resetButton.textContent = 'Reset';
+            resetButton.className = 'bot-button';
             resetButton.addEventListener('click', () => {
               resetSelection('todo-wrapper', 'form');
               resetSelection('todo-list', 'li');
             });
             const saveButton = document.createElement("button");
             saveButton.textContent = 'Save';
+            saveButton.className = 'bot-button';
             saveButton.addEventListener('click', () => {
               updateBotHeader('Step 2. Choose a child action to execute');
               updateBotBody({
@@ -184,6 +164,7 @@ export class AppComponent implements OnInit {
             if (element) {
               const runBotButton = document.createElement("button");
               runBotButton.textContent = 'Run Bot';
+              runBotButton.className = 'bot-button';
               runBotButton.addEventListener('click', () => {
                 //111 next
               });
@@ -215,6 +196,53 @@ export class AppComponent implements OnInit {
       .todo-wrapper > form:hover {
         border: 2px dashed blue;
         cursor: pointer;
+      }
+      .bot-selected {
+        border: 2px solid blue;
+      }
+      .bot-predicted {
+        border: 2px solid green;
+      }
+      .bot-button {
+        cursor: pointer;
+        padding: 0.2rem 0.5rem;
+      }
+      .bot-action-card {
+        padding: 0.5rem;
+        border: 1px solid grey;
+        border-radius: 0.5rem;
+        cursor: pointer;
+      }
+      .bot-action-card.selected {
+        border: 2px solid blue;
+      }
+      #bot-main-container {
+        background-color: white;
+        position: sticky;
+        bottom: 0;
+        width: 80%;
+        margin: auto;
+        height: 8rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+      }
+      #bot-header {
+        height: 2rem;
+        font-weight: 600;
+      }
+      #bot-body {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      #bot-footer {
+        height: 2rem;
+        display: flex;
+        align-items: end;
+        justify-content: end;
+        gap: 0.5rem;
       }
     }`;
   }
